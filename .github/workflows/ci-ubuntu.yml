@@ -20,7 +20,10 @@ jobs:
         run: python -m pytest prototype/tests -v
  
   cpp-engine:
-    runs-on: ubuntu-latest
+    # Pinned to 22.04 because:
+    #  - clang-15 + libstdc++-14 on 24.04 has <ranges> incompatibilities
+    #  - lcov 2.0 on 24.04 rejects the gcov version emitted by gcc-12
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -50,7 +53,7 @@ jobs:
       - name: Coverage (GCC only)
         if: matrix.compiler.cc == 'gcc-12'
         run: |
-          lcov --directory build --capture --output-file coverage.info --ignore-errors mismatch,source
+          lcov --gcov-tool gcov-12 --directory build --capture --output-file coverage.info
           lcov --remove coverage.info '/usr/*' '*/_deps/*' '*/tests/*' --output-file coverage.info
           lcov --list coverage.info
       - name: Upload coverage
@@ -61,7 +64,7 @@ jobs:
           path: coverage.info
  
   cross-validation:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [python-prototype, cpp-engine]
     steps:
       - uses: actions/checkout@v4
