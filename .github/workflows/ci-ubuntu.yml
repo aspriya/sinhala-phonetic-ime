@@ -53,7 +53,7 @@ jobs:
       - name: Coverage (GCC only)
         if: matrix.compiler.cc == 'gcc-12'
         run: |
-          lcov --directory build --capture --output-file coverage.info
+          lcov --gcov-tool gcov-12 --directory build --capture --output-file coverage.info
           lcov --remove coverage.info '/usr/*' '*/_deps/*' '*/tests/*' --output-file coverage.info
           lcov --list coverage.info
       - name: Upload coverage
