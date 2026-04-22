@@ -18,7 +18,9 @@ endif()
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter)
 elseif(MSVC)
-    add_compile_options(/W4 /permissive-)
+    # /utf-8 is required so that UTF-8 source literals and \uNNNN escapes
+    # survive compilation into the expected UTF-8 runtime bytes.
+    add_compile_options(/W4 /permissive- /utf-8)
 endif()
 
 include(FetchContent)
